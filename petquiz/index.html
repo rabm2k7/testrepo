@@ -1,0 +1,430 @@
+<html class="ui-mobile">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+		<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+        <script>
+		/*
+		
+		~ MODULE TESTING - DONE
+		~ ALPHA TESTING VERSION ~ DONE
+		~ BETA TESTING VERSION ~ READY
+		
+				THIS IS A VERY BIG WARNING TO ANY TEAM MEMBERS WHO ALTER THIS FILE! - THERE IS COPIES! LOTS!
+								DON'T OPEN IN JETBRAINS EITHER - NOTEPAD OR NOTEPAD++!
+				  THE CODE IS FINE AS IT IS; THERE IS NO TIME FOR IMPROVEMENTS BEFORE NEXT WEEKS DEADLINE
+								NAE TIDYING UP ANY OF THE CODE BELLOW! ITS TIDY ENOUGH!
+										
+							~~~~~	WE NEED A PHP MODULE WILL BE CREATED THAT WILL:	~~~~~~
+						|																	|
+						|		1.CONNECT TO DATABASE										|
+						|																	|
+						|		2.RECEIVE FORM INPUT FROM JS MODULE AS BELLOW 				|
+						|		-- *** MARKED AS ( -- XMLHTTP POST METHOD --) 				|
+						|																	|
+						|		3.WRITE THE ANSWER STREAM (ans1 - ans11) TO THE TABLE		|
+						|		(EACH ITEM AS STRING)										|
+						|																	|
+						|		4.CLOSE CONNECTION TO DATABASE								|
+							
+							~~~~~~					~~~~~~~~~~~~~~~~				~~~~~~
+		
+        */
+			var averageScore;
+            averageScore = [];
+
+            var userscores = new Array();
+            var displayscore = new Array();
+            for (var p = 0; p < 8; p++) {
+                displayscore[p] = new Array();
+            }
+
+
+            var questions = new Array();
+
+            questions[0] = "Question 1: How many hours a day do you have to spend with your pet?";
+            questions[1] = "Question 2: Imagine an animal. Is the animal big or small?";
+            questions[2] = "Question 3: How much are you willing to spend on the initial purchase of your new pet?";
+            questions[3] = "Question 4: How much are you willing to spend on upkeep for your new pet?";
+            questions[4] = "Question 5: Will the pet be around small children?";
+            questions[5] = "Question 6: How many years are you willing to commit to your new pet?";
+            questions[6] = "Question 7:  Will the pet be around other pets?";
+            questions[7] = "Question 8:  How much time do you have to clean up your pet each week?";
+            questions[8] = "Question 9:  How will the pet spend its recreation time?";
+            questions[9] = "Question 10: How much do you have to spend on food each week?";
+            questions[10] = "Question 11: How athletic are you?";
+
+            var displayanswers;
+            displayanswers = [];
+            displayanswers[0] = ["0.5 - 1 hours a day", "2 - 4 hours a day", "5 - 7 hours a day", "8+ hours a day"];
+            displayanswers[1] = ["Big", "Small"];
+            displayanswers[2] = ["£0 - £50", "£50 - £200", "£200 - £500", "£500+"];
+            displayanswers[3] = ["£0 - £25 monthly", "£25 - £50 monthly", "£50 - £75 monthly", "£75+ monthly"];
+            displayanswers[4] = ["Yes", "No"];
+            displayanswers[5] = ["1-5 years", "6-10 years", "10-15 years", "15+ years"];
+            displayanswers[6] = ["Yes", "No"];
+            displayanswers[7] = ["1hr+ / week", "2hr+ / week", "4hr+ / week", "5hr+ / week"];
+            displayanswers[8] = ["Supervised", "Unsupervised"];
+            displayanswers[9] = ["£5", "£10", "£15", "£20+"];
+            displayanswers[10] = ["Very Athletic", "Moderately Athletic", "Somewhat Athletic", "Not Very Athletic"];
+
+            var answersscores = new Array();
+            for (var x = 0; x < 11; x++) {
+                answersscores[x] = new Array();
+            }
+
+
+            answersscores[0][0] = [3, 1, 1, 5, 3, 5, 3, 5];
+            answersscores[0][1] = [3, 1, 1, 5, 2, 5, 2, 5];
+            answersscores[0][2] = [5, 5, 5, 2, 4, 2, 5, 4];
+            answersscores[0][3] = [4, 5, 5, 2, 4, 2, 5, 4];
+
+            answersscores[1][0] = [1, 1, 5, 2, 2, 1, 2, 1];
+            answersscores[1][1] = [3, 3, 2, 5, 4, 4, 3, 4];
+
+
+            answersscores[2][0] = [2, 2, 1, 5, 5, 5, 5, 1];
+            answersscores[2][1] = [5, 5, 1, 4, 4, 4, 4, 4];
+            answersscores[2][2] = [5, 5, 3, 2, 2, 2, 2, 5];
+            answersscores[2][3] = [5, 5, 5, 1, 1, 1, 1, 5];
+
+            answersscores[3][0] = [2, 2, 1, 5, 5, 5, 4, 5];
+            answersscores[3][1] = [4, 4, 1, 4, 4, 4, 5, 5];
+            answersscores[3][2] = [5, 5, 4, 2, 2, 2, 2, 3];
+            answersscores[3][3] = [5, 5, 5, 1, 1, 1, 1, 3];
+
+            answersscores[4][0] = [3, 3, 1, 5, 5, 3, 3, 3];
+            answersscores[4][1] = [3, 3, 5, 3, 3, 3, 4, 3];
+
+            answersscores[5][0] = [2, 2, 2, 4, 4, 1, 1, 1];
+            answersscores[5][1] = [3, 3, 3, 5, 5, 3, 3, 3];
+            answersscores[5][2] = [4, 4, 4, 4, 4, 4, 4, 4];
+            answersscores[5][3] = [5, 5, 5, 3, 3, 5, 5, 5];
+
+            answersscores[6][0] = [3, 3, 1, 5, 5, 3, 3, 3];
+            answersscores[6][1] = [3, 3, 5, 3, 3, 3, 4, 3];
+
+            answersscores[7][0] = [5, 2, 1, 5, 5, 5, 2, 5];
+            answersscores[7][1] = [5, 4, 1, 4, 4, 4, 3, 5];
+            answersscores[7][2] = [2, 5, 4, 2, 2, 2, 4, 3];
+            answersscores[7][3] = [2, 5, 5, 1, 1, 1, 5, 3];
+
+            answersscores[8][0] = [3, 3, 1, 3, 3, 3, 3, 2];
+            answersscores[8][1] = [2, 1, 3, 1, 1, 1, 1, 3];
+
+            answersscores[9][0] = [2, 2, 1, 5, 5, 5, 4, 5];
+            answersscores[9][1] = [4, 4, 1, 3, 3, 3, 5, 3];
+            answersscores[9][2] = [5, 5, 3, 2, 2, 2, 3, 2];
+            answersscores[9][3] = [5, 5, 5, 1, 1, 1, 1, 1];
+
+            answersscores[10][0] = [5, 5, 5, 5, 5, 5, 5, 4];
+            answersscores[10][1] = [4, 4, 4, 5, 4, 4, 5, 4];
+            answersscores[10][2] = [3, 3, 1, 5, 3, 3, 3, 5];
+            answersscores[10][3] = [2, 1, 1, 5, 2, 2, 2, 5];
+
+            function RecordAnswer(a, b) {
+                userscores.push(answersscores[a][b]);
+                console.log(answersscores[a][b]);
+                var s = a + 1;
+                console.log(location.hash);
+                var locationpointer = "http://" + location.hostname + "/petquiz/index.html#q" + s;
+                location.assign(locationpointer);
+            }
+
+            function RecordLastAnswer(a, b) {
+                userscores.push(answersscores[a][b]);
+                console.log(answersscores[a][b]);
+                SaveTolocalstorage();
+            }
+
+
+            function endQuiz() {
+                var locationpointer = "http://" + location.hostname + "/petquiz/index.html#quizend";
+                location.assign(locationpointer);
+            }
+
+            function SaveTolocalstorage() {
+                // copyright 2015 - Robbie Miller 
+                // using json stringify to turn array into large string
+                localStorage["scores"] = JSON.stringify(userscores);
+
+                DisplayResults();
+
+            }
+
+			
+			/* ( -- XMLHTTP POST METHOD --) 
+			
+					This is the ( -- XMLHTTP POST METHOD --) METHOD
+					THIS POSTS TO THE PHP FILE
+			
+			*/
+            function SaveToDatabase() {
+
+                var xmlhttp;
+                if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+                    xmlhttp = new XMLHttpRequest();
+                } else { // code for IE6, IE5
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+
+                xmlhttp.open("POST", "databasepost.php", true);
+                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xmlhttp.send("ans1=" + answersscores[0] + "&ans2=" + answersscores[1] + "&ans3=" + answersscores[2] + "&ans4=" + answersscores[3] + "&ans5=" + answersscores[4] + "&ans6=" + answersscores[5] + "&ans7=" + answersscores[6] + "&ans8=" + answersscores[7] + "&ans9=" + answersscores[8] + "&ans10=" + answersscores[9] + "&ans11=" + answersscores[10]);
+
+            }
+
+            function clearstorage() {
+                localStorage["scores"] = "null";
+            }
+			function cleararrays(){
+				userscores = [];
+			}
+
+            /* http://stackoverflow.com/questions/1069666/sorting-javascript-object-by-property-value */
+
+            function sortObject(obj) {
+                var arr = [];
+                for (var prop in obj) {
+                    if (obj.hasOwnProperty(prop)) {
+                        arr.push({
+                                'key': prop,
+                                'value': Math.round((obj[prop] / 110) * 100) * 2
+                            });
+                    }
+                }
+                arr.sort(function(a, b) {
+                    return b.value - a.value;
+                });
+                return arr; // returns array
+            }
+            /* http://stackoverflow.com/questions/1069666/sorting-javascript-object-by-property-value */
+
+
+            function DisplayResults() {
+                var results = JSON.parse(localStorage["scores"]);
+                /*Cat 0
+                Dog 1
+                Horse 2
+                Hamster 3
+                Guinea Pig 4
+                Budgey 5
+                Ferret 6
+                Turtle 7*/
+
+                //for each animal
+                for (var t = 0; t < 8; t++) {
+                    //for each question
+                    for (var u = 0; u < results.length; u++) {
+                        displayscore[t][u] = results[u][t];
+                    }
+                }
+                AverageCounts();
+
+                var animalarr = sortObject(Animal());
+                console.log(animalarr);
+				
+				$("#quizresults").html("");
+
+                for (var p = 0; p < 8; p++) {
+                    console.log(animalarr[p]);
+                    $("#quizresults").append("<button class=' ui-btn ui-shadow ui-corner-all'>" + animalarr[p].key + " is recommended: " + animalarr[p].value + "%</button>");
+                }
+
+                SaveToDatabase();
+				endQuiz();
+
+            }
+
+
+
+
+
+
+
+            function AverageCounts() {
+                //for each animal
+                for (var t = 0; t < 8; t++) {
+                    var count = 0;
+                    //for each item
+                    for (var i = 0; i < displayscore[t].length; i++) {
+                        count = count + displayscore[t][i];
+                    }
+                    averageScore[t] = count;
+                }
+
+                Animal();
+
+            }
+
+            function Animal() {
+                return {
+                    Cat: averageScore[0],
+                    Dog: averageScore[1],
+                    Horse: averageScore[2],
+                    Hamster: averageScore[3],
+                    Guineapig: averageScore[4],
+                    Budgey: averageScore[5],
+                    Ferret: averageScore[6],
+                    Turtle: averageScore[7],
+                };
+            }
+             // console.log();
+			 
+			 function newQuiz(){
+			 
+			 clearstorage();
+			 cleararrays();
+			 var locationpointer = "http://" + location.hostname + "/petquiz/index.html#home";
+                location.assign(locationpointer);
+			 }
+        </script>
+
+
+        <title>Pet Recommendation Quiz App</title>
+    </head>
+
+    <body class="ui-mobile-viewport ui-overlay-a">
+
+        <div data-theme="a" data-role="page" id="home" style="min-height: 799px;">
+            <div data-role="header">
+                 <h1>Pet Recommendation Quiz App</h1>
+            </div>
+            <ul data-role="listview" data-inset="true">
+                <li class="ui-first-child"> <a data-role="button" data-transition="slide" href="#quizstart">Begin Quiz</a>	
+                </li>
+
+                <li> <a data-role="button" data-transition="slide" href="#quizabout">About Quiz</a>	
+                </li>
+
+                <li class="ui-last-child"> <a data-role="button" data-transition="slide" href="#quizcreators">About Creator</a>	
+                </li>
+
+            </ul>
+        <div data-role="footer" data-position="fixed">
+             <h4>Pet Recommendation Quiz App</h4>
+        </div>
+		</div>
+
+        <div data-role="page" id="quizstart" >
+            <div data-role="header">
+                 <h1>Pet Recommendation Quiz App</h1>
+                <a href="" data-rel="back" data-icon="back"></a>
+            </div>
+            <div data-role="content">
+                <p id="">The quiz is about to begin...
+                    <br>Enter your name below:</p>
+                <form action="" method="POST">
+
+                    <input type="text" id="uname" value="">
+
+                    <a href="#q0" data-transition="slide">
+                        <input type="button" value="Begin Quiz Now!" onclick="">
+                    </a>
+
+                </form>
+
+            </div>
+            <div data-role="footer" data-position="fixed">
+                 <h4>Pet Recommendation Quiz App</h4>
+            </div>
+        </div>
+
+
+        <script>
+            for (var t = 0; t < questions.length; t++) {
+                console.log(questions[t]);
+                document.write('<div data-role="page" id="q' + t + '"> <div data-role="header"> <h1>Pet Recommendation Quiz App</h1></div> <div data-role="content"> <p id="">' + questions[t] + '</p> <form action="" method="POST">');
+
+                for (var u = 0; u < displayanswers[t].length; u++) {
+
+                    console.log(displayanswers[t][u]);
+                    if (t == questions.length - 1) {
+                        document.write('<input type="button" value="' + displayanswers[t][u] + '" onclick="RecordLastAnswer(' + t + ',' + u + ')" class="ui-btn">');
+                    } else {
+                        document.write('<input type="button" value="' + displayanswers[t][u] + '" onclick="RecordAnswer(' + t + ',' + u + ')" class="ui-btn">');
+                    }
+                    /*if(displayanswers[t].length=2){	
+					//print 2 questions
+							document.write('<div class="ui-grid-a"><div class="ui-block-a"><input type="button" value="0.5 - 1 hours a day" onclick="" class="ui-btn"><input type="button" value="2 - 4 hours a day" onclick="" class="ui-btn"></div> <div class="ui-block-b"> <input type="button" value="5 - 7 hours a day" onclick="" class="ui-btn"> <input type="button" value="8+ hours a day" onclick="" class="ui-btn"> </div> </div>');
+					}else{
+							document.write('<div class="ui-grid-a"><div class="ui-block-a"><input type="button" value="0.5 - 1 hours a day" onclick="" class="ui-btn"><input type="button" value="2 - 4 hours a day" onclick="" class="ui-btn"></div> <div class="ui-block-b"> <input type="button" value="5 - 7 hours a day" onclick="" class="ui-btn"> <input type="button" value="8+ hours a day" onclick="" class="ui-btn"> </div> </div>');
+					}
+					*/
+
+                }
+
+				document.write('</form></div>');
+                document.write('<div data-role="footer" data-position="fixed"><h4>Pet Recommendation Quiz App</h4></div></div>');
+            }
+        </script>
+       
+
+
+        
+
+
+
+        <div data-role="page" id="quizend">
+            <div data-role="header">
+                 <h1>Pet Recommendation Quiz App</h1>
+                <a href="" data-rel="back" data-icon="back"></a>
+            </div>
+            <div data-role="content">
+                 <h2>The Quiz is...  FINISHED!</h2>
+
+                <div id="quizresults" onclick="clearstorage()">
+                </div>
+				
+				<br>
+				
+				<button onclick="newQuiz()">Click Here to begin Quiz</button>
+
+			</div>
+            <div data-role="footer" data-position="fixed">
+                 <h4>Pet Recommendation Quiz App</h4>
+			</div>
+		</div>
+	
+		<div data-role="page" id="quizabout">
+            <div data-role="header">
+                 <h1>Pet Recommendation Quiz App</h1>
+                <a href="#" data-rel="back" data-icon="back"></a>
+            </div>
+            <div data-role="content">
+					<p>The quiz is pretty simple! Just click the buttons of the quiz and you will receive the list of pets recommended by % in descending order of recommendation</p>
+            </div>
+            <div data-role="footer" data-position="fixed">
+                 <h4>Pet Recommendation Quiz App</h4>
+            </div>
+        </div>
+		
+		<div data-role="page" id="quizcreators">
+            <div data-role="header">
+                 <h1>Pet Recommendation Quiz App</h1>
+                <a href="index.html#" data-rel="back" data-icon="back"></a>
+            </div>
+            <div data-role="content">
+					<p>We quiz creators are students</p>
+					<p>We create apps and mobile games</p>
+					<p>And quizzes...</p>
+					<p>The team is:</p>
+						<ul>
+							<li>Robbie</li>
+							<li>Ed</li>
+						</ul>
+
+            </div>
+            <div data-role="footer" data-position="fixed">
+                 <h4>Pet Recommendation Quiz App</h4>
+            </div>
+        </div>
+		
+    </body>
+
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+	
+	<script>
+	var ticketprice = 25;
+	
+	function checkClicked() {
+	        var sliderDiv = document.getElementById("tournum");
+			slideAmount = sliderDiv.innerHTML;
+			updateSlider(slideAmount);
+	}
+	
+	function updateSlider(slideAmount) {
+        var sliderDiv = document.getElementById("tournum");
+        sliderDiv.innerHTML = slideAmount;
+		
+		var bSubtotal = document.getElementById("subtotal");
+        bSubtotal.innerHTML = "e" + (slideAmount * ticketprice);
+		
+		var privateT = document.getElementById("privatetour");
+		
+
+		var iDiscount = document.getElementById("discountnum");
+		var bDiscount = document.getElementById("discount");
+		var discount = 0;
+		var totaldiscount;
+		if(slideAmount<5){
+			if(privateT.checked){
+			discount = 0;
+			}
+			else{
+			discount = 20;
+			}
+			
+			iDiscount.innerHTML = discount;
+			totaldiscount = ((slideAmount * ticketprice) / 100) * discount;
+			bDiscount.innerHTML = "e" + totaldiscount;
+			
+		}
+		else{
+			if(privateT.checked){
+			discount = 10;
+			}
+			else{
+			discount = 30;
+			}
+			
+			iDiscount.innerHTML = discount;
+			totaldiscount = ((slideAmount * ticketprice) / 100) * discount;
+			bDiscount.innerHTML = "e" + totaldiscount;
+		}
+		
+		var totalB = document.getElementById("total");
+		var total = (slideAmount * ticketprice) - totaldiscount;
+        totalB.innerHTML = "e" + total;
+		}
+	</script>
+	
+    <!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Dam Good Tours</title>
+	<meta name="description" content="Best Amsterdam Tours Available">
+	
+    <!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <!-- CSS
+  ================================================== -->
+  	<link rel="stylesheet" href="css/zerogrid.css">
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/component.css">
+	<link rel="stylesheet" href="css/responsive.css">
+	
+	<!--[if lt IE 8]>
+       <div style=' clear: both; text-align:center; position: relative;'>
+         <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+           <img src="http://storage.ie6countdown.com/assets/100/images/banners/warning_bar_0000_us.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today." />
+        </a>
+      </div>
+    <![endif]-->
+    <!--[if lt IE 9]>
+		<script src="js/html5.js"></script>
+		<script src="js/css3-mediaqueries.js"></script>
+	<![endif]-->
+	
+	<link href='./images/favicon.ico' rel='icon' type='image/x-icon'/>
+    
+</head>
+<body>
+<div class="wrap-body">
+<!--------------Header--------------->
+<div class="top-header">
+	<div class="zerogrid">
+		<div class="row">
+			<nav>
+			  <a class="toggleMenu" href="#">Menu</a>
+			  <ul class="menu">
+				  <li><a href="index.html">Home</a></li>
+				  <li><a href="index.html">About</a></li>
+				  <li>
+					  <a href="single.html" class="parent">Tours & Crawls</a>
+					  <ul>
+						  <li><a href="single.html">Walking City Tours</a></li>
+						  <li><a href="single.html">Bicycle City Tours</a></li>
+						  <li><a href="single.html">Bar Crawl</a></li>
+						  <li><a href="single.html">Coffeeshop Crawl</a></li>
+					  </ul>
+				  </li>
+				  <li><a href="single.html">Private Tours</a></li>
+				  <li><a href="single.html">Contact Us</a></li>
+			  </ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<header>
+	<div class="wrap-header">
+		<div class="zerogrid">
+			<div id="logo"><a href="#"><img src="./images/logo.png"/></a>
+				<div class="footer-social">
+								  <br>
+								  <a href="#"><img src="images/facebook.png" title="facebook"/></a>
+								  <a href="#"><img src="images/twitter.png" title="twitter"/></a>
+								  <a href="#"><img src="images/google.png" title="google"/></a>
+								  <a href="#"><img src="images/pinterest.png" title="pinterest"/></a>
+								  <a href="#"><img src="images/instagram.png" title="instagram"/></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</header>
+
+
+<!--------------Content--------------->
+<section class="container">
+	<div class="zerogrid">
+		<div class="col-2-3">
+			<div id="main-content" class="wrap-col">
+				<article class="single">
+					<img class="full" src="images/img01.jpg">
+					<div class="wrap-art">
+						<div class="art-header">
+							<h1 class="title"><a href="#">Bar Crawls</a></h1>
+						</div>
+						<div class="art-content">
+							<p>Cover Photo: <span>Barbara Nowak</span></p>
+							
+							<br>
+
+							<form id="bookingform" method="POST">
+								Email : <input type="email" name="touremail">  <br>
+								Tour Date : <input type="date" name="tourdate" min="2015-09-01">  <br>
+								Number of people : <b id="tournum">2</b> <input type="range" id="tourpeople" min="2" max="10" step="1" value="2" onchange="updateSlider(this.value)"> <br>
+								Private Tour? : <input type="checkbox" id="privatetour" onchange="checkClicked()"> <br>
+								Subtotal : <b id="subtotal">e50</b><br>
+								Less Discount @ <i id="discountnum">20</i>% : <b id="discount">e10</b><br>
+								Total : <b id="total">e40</b><br>
+								<input type="submit" value="Book Now!">
+							</form>
+							
+						</div>
+					</div>
+				</article>
+				<article>
+					<div class="art-related">
+						<div class="wrap-art-related">
+							<h1 class="title"><a href="#">Other Tours</a></h1>
+							<div class="row">
+								<div class="col-1-3"><div class="wrap-col">
+									<a href="#"><img src="images/img03.jpg"></a>
+									<a href="#"><h4>Walking City Tours</h4></a>
+								</div></div>
+								<div class="col-1-3"><div class="wrap-col"></a>
+									<a href="#"><img src="images/img06.jpg">
+									<a href="#"><h4>Bicycle City Tours</h4></a>
+								</div></div>
+								<div class="col-1-3"><div class="wrap-col"></a>
+									<a href="#"><img src="images/img05.jpg">
+									<a href="#"><h4>Coffeeshop Tours</h4></a>
+								</div></div>
+							</div>
+						</div>
+					</div>
+				</article>
+			</div>
+		</div>
+		<div class="col-1-3">
+			<div id="sidebar" class="wrap-col">
+				<div class="wrap-slidebar">
+					<div class="widget">
+						<div class="wid-about"><a>Special Offers</a></div>
+					</div>
+					
+					<div class="widget wid-posts">
+						<div class="wid-header">
+							<h4>Upcoming Tours</h4>
+							<div class="clear"></div>
+						</div>
+						<div class="wid-content">
+							<div class="row post">
+								<a href="#"><img src="images/img01.jpg"/></a>
+								<div class="resent">
+								  <h6><a href="#">Walking City Tour</a></h6><br>
+								  <p>12:00-16:00, 30/8/2015</p>
+								</div>
+							</div>
+							<div class="row post">
+								<a href="#"><img src="images/img02.jpg"/></a>
+								<div class="resent">
+								  <h6><a href="#">Bicycle City Tour</a></h6><br>
+								  <p>12:00-16:00, 30/8/2015</p>
+								</div>
+							</div>
+							<div class="row post">
+								<a href="#"><img src="images/img03.jpg"/></a>
+								<div class="resent">
+								  <h6><a href="#">Coffeeshop Crawl</a></h6><br>
+								  <p>12:00-17:00, 30/8/2015</p>
+								</div>
+							</div>
+							<div class="row post">
+								<a href="#"><img src="images/img04.jpg"/></a>
+								<div class="resent">
+								  <h6><a href="#">Bar Crawl</a></h6><br>
+								  <p>20:00-3:00, 30/8/2015</p>
+								</div>
+							</div>
+						</div>
+					</div>
+							
+				</div>
+		</div>
+	</div>
+</section>
+<!--------------Footer--------------->
+<footer>
+	<div class="zerogrid">
+	   <div class="col-1-3">
+			<div class="copyright">
+				<p>© 2015 zAvada. <a href="http://www.zerotheme.com">Html5 Template</a> Designed by Zerotheme.com</p>
+			</div>
+	   </div>
+	   <div class="col-1-3">
+			<div class="back-to-top">
+				<a href="#">Back to top</a>
+			</div>
+	   </div>
+	</div>
+</footer>
+
+</div>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/navigation.js"></script>
+</body></html>

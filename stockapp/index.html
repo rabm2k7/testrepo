@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html manifest="finance.appcache"> 
+ <head> 
+ 
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+  <link rel="stylesheet" href="css/themes/mellowyellow.css" />
+  <link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+<script src="js/popups.js"></script>
+
+  <script>
+	
+	var arr = [];
+	var i = 0;
+	var tradearray = new Array();
+	// trade construction
+	function OpenTrade(bidtype,bidperpoint,tradetime,openprice){
+			var d = new Date();
+			this.systemtradetime = d.getTime(); //current time
+			this.bidtype = bidtype;
+			this.bidperpoint = bidperpoint;
+			this.tradetime = tradetime*60000; //minutes = ( 60000 milliseconds )
+			this.openprice = openprice;
+	}
+	function RefreshTable(){
+	//used to refresh the table
+	refreshpage = setInterval(function(){
+		refreshttable();
+	},650);
+	}
+
+	function updateQuotes(data) {
+		// for each item in feed
+	   for (ticker in quote) {
+		var symbol = quote[ticker];
+				  $(document).ready(function(){
+						// append buttons to canvas with stock ticker, bid price
+					   $("#canvas").append("<button class='opentrade' onclick='stopReload()'>" + symbol.Ticker + " @ " + symbol.Last + "  - Open Trade</button><br>");
+				  }); 
+		return symbol;
+		}
+	}
+	
+
+     function reloadWindow() {
+	 location.reload();
+	 }
+	 function stopReload(){
+	 clearInterval(interval);
+	 }
+	 function saveArray(){
+		localStorage["tradearray"] = JSON.stringify(tradearray);
+	 }
+	 function loadArray(){
+		tradearray = JSON.parse(localStorage["tradearray"]);
+	 }
+	
+	//input from bid prompt
+	function promptOKFunc() {
+	var slide = getSliderValues();
+	//open new trade in array
+	tradearray[tradearray.length] = new OpenTrade(slide.bidtype,slide.bidperpoint,slide.tradetime,arr[0]["^FTSE"].Last);
+	RefreshTable();
+	reloadWindow();
+	}
+
+	function promptCancelFunc() {
+		RefreshTable();
+		reloadWindow();
+	}
+	function resetBalance() {
+				localStorage["userbalance"] = 10.00;
+	}
+	function CloseTrade(tradeid){
+	//if current quote>openbid then (takeaway diff) + balance
+	var balance = 0;
+	//if bid price > trade opening price
+	if(arr[0]["^FTSE"].Last>tradearray[tradeid].openprice){
+		//add
+		balance = tradearray[tradeid].openprice - arr[0]["^FTSE"].Last;
+		balance = balance * tradearray[tradeid].bidperpoint;
+		localStorage["userbalance"] =+ balance;
+		}else{
+		//take away
+		balance = arr[0]["^FTSE"].Last - tradearray[tradeid].openprice;
+		balance = balance * tradearray[tradeid].bidperpoint;
+		localStorage["userbalance"] =+ balance;
+	}
+	delete tradearray[tradeid];
+	tradearray = cleanArray(tradearray);
+	saveArray();
+	reloadWindow();
+	}
+	 
+	
+function cleanArray(actual){
+  var newArray = new Array();
+  for(var i = 0; i<actual.length; i++){ 
+    // if array item is then push object to new array
+      if (actual[i]){
+        newArray.push(actual[i]);
+    }
+  }
+  // return clean array
+  return newArray;
+}
+	
+	function refreshttable() {
+		//create table header
+				var tableheader = '<table><tr><td hidden="true">Trans Id:</td>  <td>Ticker:</td> <td>Bid:</td>  <td>Open:</td> <td>Current:</td> <td>Unrealised P&L </td> <td>Time Remaining </td> <td>Close</td> </tr>';			
+		//for each item in trade array
+				var tablebody = "";
+				//only if the trade array isnt empty!
+				if(tradearray.length>0){
+				//for each trade in the tradearray
+				for(var i=0; i<tradearray.length; i++){
+				var d = new Date();
+				var currentsystemtime = d.getTime();
+				var currenttrade = tradearray[i];
+				//if systemtradetime.seconds + tradetime.seconds < currentsystemtime
+				var tradetimeend = tradearray[i].systemtradetime+tradearray[i].tradetime;
+				//time left ( ie > 0 )
+				var timeleft = tradetimeend-currentsystemtime;
+					if(timeleft<0){		
+						//close trade
+						CloseTrade(i);
+						//delete from array
+						delete tradearray[i];
+						//clean tradearray
+						tradearray = cleanArray(tradearray);
+						//reload window
+						reloadWindow();
+							//create body elements
+						}else{ //add elements to body
+						tablebody = tablebody.concat('<tr><td hidden="true"></td>  <td>FTSE100</td> <td>' + tradearray[i].bidtype + '</td> <td>' + arr[0]["^FTSE"].Last + '</td>  <td>' + tradearray[i].openprice + '</td> <td>' + ((tradearray[i].openprice-arr[0]["^FTSE"].Last)*tradearray[i].bidperpoint) + ' </td> <td>' + timeleft + '</td> <td><button onclick=CloseTrade('+ i +')>Close</button></td> </tr>');
+
+						}
+					}
+				}
+				else{
+				//no open trades msg
+				}
+		//table footer
+			var tablefooter = "</table>";
+		
+		// compile elements
+		var resultprint1 = tableheader.concat(tablebody);
+		var resultprint2 = resultprint1.concat(tablefooter);
+		//display to results div
+		$("#results").html(resultprint1);
+		tradearray = cleanArray(tradearray);
+		saveArray();
+	}
+	
+ </script>
+ 
+  <script src="http://feeds.financialcontent.com/JSQuote?Ticker=^FTSE"></script>
+    <script>  arr[i] = quote; i++;</script>
+
+	  <script> 
+	  var interval;
+	  $(document).ready(
+		function(){
+		//opening functions
+		if(localStorage["tradearray"]){loadArray();}
+		RefreshTable();
+		interval = setInterval(function(){
+		reloadWindow();
+		},10000);
+		
+		//attach click bid prompt listener
+		$(".opentrade").click(function() {
+			popupBid("Open Bid",
+				promptOKFunc,
+				promptCancelFunc
+			);
+		});
+			
+	   });
+	  </script>
+ 
+</head>
+ <body>
+<div data-theme="a" data-role="page" id="home">
+<div data-role="header">
+ <h1>Stock Gambling App</h1>
+ </div> 
+ <div data-role="content" style="text-align: center;">
+		 
+		 
+		 
+		 <div id="canvas"></div>
+		 
+		 <br />
+		 <div id="results" align="center">
+			
+		 </div>
+</div>		 
+  <div data-role="footer" data-position="fixed">
+ <h4>Stock Gambling App</h4><a href="#panel" onclick="stopReload()">Menu</a><button onclick="stopReload()">Stop Refresh</button>
+ </div>
+ </div>
+ 
+ <div data-theme="a" data-role="page" id="about">
+<div data-role="header">
+ <h1>Stock Gambling App</h1>
+ </div> 
+ <div data-role="content" style="text-align: center;">
+   <h2>About Creators</h2>
+		 <p>This stock market gambling app was created by Robbie Miller & Michael Farren</p>
+		 <p>We created it as part of our coursework for university!</p>
+		 <p>Everyone else done weather apps and had it easy...</p>
+		 <p>But we went to the moon!</p>
+
+
+</div>		 
+  <div data-role="footer" data-position="fixed">
+ <h4>Stock Gambling App</h4><a href="#panel" onclick="stopReload()">Menu</a><button onclick="stopReload()">Stop Refresh</button>
+ </div>
+ </div>
+
+ 
+  <div data-theme="a" data-role="page" id="userguide">
+<div data-role="header">
+ <h1>Stock Gambling App</h1>
+ </div> 
+ <div data-role="content" style="text-align: center;">
+  <h2>User Guide</h2>
+
+		 <p>To begin, Click the button that says the stock ticker name and the current price. </p>
+		 <p>Then a prompt will appear asking for your bid per point and the number of minutes to run the trade for.</p>
+		 <p>The trade will appear bellow the open trade button in the table.</p>
+		 <p>The table will show all open trades and details of those trades and an option to close them early.</p>
+
+</div>		 
+  <div data-role="footer" data-position="fixed">
+ <h4>Stock Gambling App</h4><a href="#panel" onclick="stopReload()">Menu</a><button onclick="stopReload()">Stop Refresh</button>
+ </div>
+  </div>
+
+ 
+  <div data-theme="a" data-role="page" id="topupaccount">
+<div data-role="header">
+ <h1>Stock Gambling App</h1>
+ </div> 
+ <div data-role="content" style="text-align: center;">
+		 <p onclick="resetBalance()">Click here to update balance to 10.00</p>
+</div>		 
+  <div data-role="footer" data-position="fixed">
+ <h4>Stock Gambling App</h4><a href="#panel" onclick="stopReload()">Menu</a><button onclick="stopReload()">Stop Refresh</button>
+ </div>
+  </div>
+  
+    <div data-theme="a" data-role="page" id="connect">
+<div data-role="header">
+ <h1>Stock Gambling App</h1>
+ </div> 
+ <div data-role="content" style="text-align: center;">
+		 <p>Please connect to wifi or mobile data.</p>
+</div>		 
+  <div data-role="footer" data-position="fixed">
+ <h4>Stock Gambling App</h4><a href="#panel" onclick="stopReload()">Menu</a><button onclick="stopReload()">Stop Refresh</button>
+ </div>
+  </div>
+
+ 
+<div id="panel" data-theme="a" data-role="panel">
+		<div><h2>User: Username</h2></div>
+		<div><h2>Balance: 10.00</h2></div>
+		<div>
+		<a href="#home" data-role="button">Home</a><br>
+		<a href="#about" data-role="button">About Creators</a><br>
+		<a href="#userguide" data-role="button">User Guide</a><br>
+		<a href="#topupaccount" data-role="button">Top Up Account</a><br>
+		
+		<a id="close" data-role="button" data-rel="back">Close</a>
+		</div>
+</div>
+
+</body>
+ 
+ </html>

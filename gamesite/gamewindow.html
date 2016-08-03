@@ -1,0 +1,167 @@
+					<script type="text/javascript" src="js/phaser.min.js"></script>
+
+					<script type="text/javascript">
+
+					var game = new Phaser.Game(500, 300, Phaser.CANVAS, 'phaser-example', { preload: preload, create: create, render: render });
+
+					function preload() {
+
+						game.load.image('buy', 'buy.gif');
+						game.load.image('sell', 'sell.gif');
+
+					}
+
+					var incomeperday = 10;
+					var money = 10000;
+
+					var currentloan = 0;
+					var currentintrest = 0.02;
+					var nextrepayment = currentloan / 10;
+					var maxloan = incomeperday * 10;
+
+					var counter = 0;
+					var gamehrs = 240;
+					var gameday = 0;
+
+					var buybutton;
+					var sellbutton;
+
+					var globalGameObj = 	{	house:new gameObj("house", 10, 0, 10),
+												car:new gameObj("car", 5, 20, -10)
+											};
+					var globalGameNews = 	{	goldboom:new newsObj("goldboom", "gold", -100, 10), 
+												newsagentstrike:new newsObj("newsstrike", "newsagents", -100, 10)
+											};
+
+
+					function create() {
+
+						game.stage.backgroundColor = '#FFFFFF';
+						
+						
+						text = game.add.text(((game.world.centerX/100)*20), ((game.world.centerY/100)*20), 'Counter: 0', { font: "34px Arial", fill: "#000000", align: "center" });
+						text.anchor.setTo(0, 0);
+						
+						incometxt = game.add.text(((game.world.centerX/100)*25), ((game.world.centerY/100)*40), 'Income PH: $0', { font: "10px Arial", fill: "#000000", align: "center" });
+						incometxt.anchor.setTo(0, 0);
+						
+						moneytxt = game.add.text(((game.world.centerX/100)*25), ((game.world.centerY/100)*46), 'Money: $100', { font: "12px Arial", fill: "#000000", align: "center" });
+						moneytxt.anchor.setTo(0, 0);
+						
+						gamedaytxt = game.add.text(((game.world.centerX/100)*25), ((game.world.centerY/100)*52), 'Game Day: 0', { font: "8px Arial", fill: "#000000", align: "center" });
+						gamedaytxt.anchor.setTo(0, 0);
+
+						buybutton = game.add.button(((game.world.centerX/100)*30), ((game.world.centerY/100)*60), 'buy', buyHouse, this);
+						sellbutton = game.add.button(((game.world.centerX/100)*70), ((game.world.centerY/100)*60), 'sell', sellHouse, this);
+						
+						//  Here we'll create a basic looped event.
+						//  A looped event is like a repeat event but with no limit, it will literally repeat itself forever, or until you stop it.
+
+						//  The first parameter is how long to wait before the event fires. In this case 1 second (you could pass in 1000 as the value as well.)
+						//  The next two parameters are the function to call ('updateCounter') and the context under which that will happen.
+
+						tickloop = game.time.events.loop(Phaser.Timer.SECOND, tick, this);
+						newsloop = game.time.events.loop(Phaser.Timer.SECOND*30, news, this);
+						
+
+					}
+
+					function news(){
+						
+					}
+
+					function newsObj(evtName, objAffected, evtValue, evtRandomness) {
+						this.evtName = evtName;  
+						this.objAffected = objAffected;
+						this.evtValue = evtValue;
+						this.evtRandomness = evtRandomness;
+						this.changeEvtValue = function (value) {
+							this.evtValue = value;
+						}
+						this.changeEvtRandomness = function (ratio) {
+							this.evtRandomness = ratio;
+						}
+					}
+
+					function gameObj(objname, objcurrentprice, objvolatility, objincomeperday) {
+						this.objname = objname;  
+						this.objcurrentprice = objcurrentprice;
+						this.objvolatility = objvolatility;
+						this.objincomeperday = objincomeperday;
+						this.changeCurrentPrice = function (price) {
+							this.objcurrentprice = price;
+						}
+						this.changeVolatility = function (volatility) {
+							this.objvolatility = volatility;
+						}
+						this.changeIncomePerDay = function (newincome) {
+							this.objincomeperday = newincome;
+						}
+					}
+					function tick() {
+						
+						gamehrs--;
+						counter++;
+						money = (money + (incomeperday/(240)));
+						money = game.math.roundTo(money,-2)
+						text.setText('Counter: ' + counter);
+						incometxt.setText('Income Per Day: $' + incomeperday);
+						moneytxt.setText('Money: $' + money);
+						if(gamehrs<1){
+							gameday++;
+							gamedaytxt.setText('Game Day: ' + gameday);
+							gamehrs = 240;
+						}
+					}
+
+					function buyClick(objectname) {
+						var obj = globalGameObj[objectname];
+						if(money>obj.objcurrentprice){
+						money = money-obj.objcurrentprice;
+						incomeperday = incomeperday+obj.objincomeperday;
+						incomeperday = game.math.roundTo(incomeperday,-2)
+						}
+					}
+
+					function sellClick(objectname) {
+						var obj = globalGameObj[objectname];
+						money = money+obj.objcurrentprice;
+						incomeperday = incomeperday-obj.objincomeperday;
+						incomeperday = game.math.roundTo(incomeperday,-2)
+						game.debug.text("sellclicked" , 32, 96);
+					}
+
+					function borrowMoney(loanask){
+						if(currentloan<maxloan){
+							if(loanask<(maxloan-currentloan)){
+								money = money+loanask;
+								currentloan = currentloan+loanask;
+								maxloan = incomeperday * 10;
+							}
+						}
+					}
+					function paybackLoan(){
+						if(currentloan>0){
+							money = money - nextrepayment;
+							currentloan = currentloan - nextrepayment;
+							nextrepayment = currentloan / 10;
+							maxloan = incomeperday * 10;
+						}
+						
+					}
+
+					function buyHouse(){
+						buyClick("house");
+					}
+					function sellHouse(){
+						sellClick("house");
+					}
+
+					function render() {
+
+						game.debug.text("Time until event: " + game.time.events.duration.toFixed(0), 32, 32);
+						game.debug.text("Next tick: " + game.time.events.next.toFixed(0), 32, 64);
+
+					}
+
+					</script>

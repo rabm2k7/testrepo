@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<style>
+	.imagesize{ max-height: 300px; max-width: 300px;}
+	.logosize{ max-height: 150px; max-width: 150px;}
+	</style>
+
+	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+	<script>
+		$(document).ready(function(){
+
+		loadList();
+			
+		setTimeout(function(){ 
+			clearList(loadList());
+		}, 10000);
+		
+
+		});
+		
+
+		function clearList(){
+		$('#imagesItems').html("");
+		}
+
+
+		function loadList(){
+	   $.ajax({
+		      url: 'http://46.101.9.141/entries',
+		      data: {
+		         format: 'json'
+		      },
+		      error: function() {
+		         $('#info').html('<p>An error has occurred</p>');
+		      },
+		      dataType: 'json',
+		      success: function(data) {
+			     
+			      $.each(data, function(index,value){
+			      	//	console.log(data[index].entry.entities);
+			      		var x = data[index].entry.entities;
+
+			      		for (var entry in x) {
+			      			console.log(x[entry].entity.url);
+
+								var $listitem = $('<div>').html('<div class="wrap-col"><a href="#page1"><img style="max-height: 300px; max-width: 300px" src="' + x[entry].entity.url + '"></a></div>').addClass("col-1-3");
+
+						      	$('#imagesItems').append($listitem);
+
+			      		}
+			      		console.log(x);
+
+			      });
+
+
+		      },
+		      type: 'GET'
+		    });
+		}
+
+
+
+	</script>
+
+</head>
+<body>
+
+<div data-role="page" id="home" data-theme="a">
+ 
+	<div data-role="header" style="text-align: center;">
+    <img class="logosize" src="images/GeniusLoci.png" alt="logo" ></img>
+	</div>
+
+	
+	<div data-role="main" class="ui-content">
+		<div class="zerogrid">
+			<div class="row">
+			</div>
+
+			<div class="row">
+				<div id="maincontent" class="col-2-3">
+					<div class="wrap-col">
+						<div class="row">
+						
+							<div class="col-1-1"><div class="wrap-col">
+							
+							
+							</div></div>
+							
+							<div class="col-1-1"><div class="wrap-col">
+							
+							<h3>Select A Building Bellow</h3>
+
+							<div id="imagesItems" class="row">
+							</div>
+							</div></div>				
+							
+						</div>
+					</div>
+				</div>		
+				<div id="nav" class="col-1-3">
+					<div class="wrap-col">
+					
+					<h3>Info</h3>
+							<ul data-role="listview" data-inset="true">
+							  <li><a href="#about">About</a></li>
+							  <li><a href="#contact">Contact</a></li>
+							</ul>
+							
+					</div>
+				</div>
+
+		</div>
+		</div>
+ 
+	</div>
+
+	<div data-role="footer">
+        <h4 style="text-align: center;"><img  class="logosize" src="images/GeniusLoci.png" alt="geniloci logo"></img> </h4>	</div> 
+</div> 
+
+
+<div data-role="page" id="viewdata">
+  <div data-role="header">
+    <a href="#home" class="ui-btn ui-icon-home ui-btn-icon-notext"></a><h1>GeniLoci</h1>
+  </div>
+
+  	<div data-role="main" class="ui-content">
+		<div class="zerogrid">
+			<div class="row">
+			</div>
+
+		<div class="row">
+				<div id="maincontent" class="col-2-3">
+					<div class="wrap-col">
+						<div class="row">
+						
+							<div class="col-2-3"><div class="wrap-col">
+							
+							<h3>View Data</h3>
+							<p>Hello :),
+							<br><br>
+							Nice page
+							</p>
+							
+							</div></div>
+							
+							<div class="col-1-3"><div class="wrap-col">
+									<p>Test</p>
+							</div></div>
+							
+							
+						</div>
+					</div>
+				</div>		
+				<div id="nav" class="col-1-3">
+					<div class="wrap-col">
+					
+					<h3>Info</h3>
+							<ul data-role="listview" data-inset="true">
+							  <li><a href="#about">About</a></li>
+							  <li><a href="#contact">Contact</a></li>
+							  </ul>
+							
+					</div>
+				</div>
+				<div data-role="footer">
+		        <h4 style="text-align: center;"><img src="images/GeniusLoci.png" alt="geniloci logo" class="logosize"></img> 
+		        </h4>	
+				</div> 
+
+		</div>
+		</div>
+ 
+
+</div> 
+</div>
+
+</div> 
+
+<div data-role="page" id="page1">
+  <div data-role="header">
+    <a href="#home" class="ui-btn ui-icon-home ui-btn-icon-notext"></a><h1>GeniLoci</h1>
+  </div>
+
+  	<div data-role="main" class="ui-content">
+		<div class="zerogrid">
+			<div class="row">
+			</div>
+
+		<div class="row">
+				<div id="maincontent" class="col-2-3">
+					<div class="wrap-col">
+						<div class="row">
+
+<div class="col-1-2">
+	<div class="wrap-col">
+		<h2>
+			Calton Hill
+		</h2>
+		<div>
+			<h3>Description:</h3>
+			<p>
+				Calton Hill, is a hill in central Edinburgh, Scotland, situated beyond the east end of Princes Street and included in the city's UNESCO World Heritage Site.
+			</p>	
+		</div>
+		<div>
+			<h3>Audio:</h3>
+			<audio controls>
+				<source src="http://www.ewht.org.uk/uploads/podcasts/ep03-Calton-Hill.mp3" type="audio/mpeg">
+				Your browser does not support the audio element.
+			</audio>
+		</div>
+		<div>
+			<h3>Video:</h3>
+			<iframe class="imagesize" src="https://www.youtube.com/embed/_kG0a-2mC-A" frameborder="0" allowfullscreen></iframe>
+		</div>
+		<div>
+			<h3>Images:</h3>
+			<img class="imagesize" src="https://upload.wikimedia.org/wikipedia/commons/f/f6/CaltonHillDugaldMonument.jpg" alt="">
+			<br>
+			<img class="imagesize" src="http://www.lateralcity.com/Media/Default/viewpoints/Edinburgh%20from%20Calton%20Hill-1.jpg" alt="">
+			<br>
+			<img class="imagesize" src="https://folkestonejack.files.wordpress.com/2013/06/edinburgh_14b.jpg" alt="">
+			<br>
+		</div>
+	</div>
+</div>
+<div class="col-1-2">
+	<div class="wrap-col" style="text-align: center;">
+				<img class="imagesize" src="images/Blackwells.jpg" alt="">
+				<img class="imagesize" src="images/rmt.png" alt="">
+				<img class="imagesize" src="images/Waterstones.jpg" alt="">
+				<img class="imagesize" src="images/whisky.png" alt="">
+
+	</div>
+</div>				
+							
+						</div>
+					</div>
+				</div>		
+				<div id="nav" class="col-1-3">
+					<div class="wrap-col">
+					
+					<h3>Info</h3>
+							<ul data-role="listview" data-inset="true">
+							  <li><a href="#about">About</a></li>
+							  <li><a href="#contact">Contact</a></li>
+							  </ul>
+							
+					</div>
+				</div>
+
+		</div>
+		</div>
+ 
+	</div>
+
+<div data-role="footer">
+        <h4 style="text-align: center;"><img src="images/GeniusLoci.png" alt="geniloci logo" class="logosize"></img> </h4>	</div> 
+</div>  
+  
+
+</div> 
+
+
+
+</body>
+</html>
+
